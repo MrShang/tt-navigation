@@ -6,17 +6,12 @@ import ZoomControls from '@tomtom-international/web-sdk-plugin-zoomcontrols';
 
 const TomTomMap = () => {
     const mapContainerRef = useRef(null);
-    const [error, setError] = useState(null);
     const API_KEY = 'slbuC9DI0UphoNVEMdii60WZB5GT6kut';
     const options = {
         searchOptions: {
             key: API_KEY,
             language: "en-GB",
             limit: 5,
-        },
-        autocompleteOptions: {
-            key: API_KEY,
-            language: "en-GB",
         },
         noResultsMessage: 'No results found.'
     };
@@ -75,7 +70,7 @@ const TomTomMap = () => {
                 services.calculateRoute({
                   key: API_KEY,
                   locations: locations
-                }).then(function(routeData) {
+                }).then(routeData => {
                     const geoData = routeData.toGeoJson();
                     console.log({ geoData });
                     map.addLayer({
@@ -95,9 +90,20 @@ const TomTomMap = () => {
                         }
                     });
                     console.log('starting navigation simulation...');
-//                    map.setPitch(50);
-//                    moveCurrentLocation(map, geoData.features[0].geometry.coordinates);
-//                    map.setPitch(0);
+                    let currentStep = 0;
+                    const stepInterval = 100; // Move to the next step every second
+                    const routeGeometry = geoData.features[0].geometry.coordinates;
+                    const simulateStep = () => {
+                        if (currentStep < routeGeometry.length) {
+                          const position = routeGeometry[currentStep];
+                          map.panTo([position[0], position[1]]);
+                          currentStep++;
+                          setTimeout(simulateStep, stepInterval);
+                        }
+                    };
+
+                    map.setPitch(45);
+                    simulateStep();
                 });
             });
 
