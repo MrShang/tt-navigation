@@ -3,6 +3,9 @@ import tt from "@tomtom-international/web-sdk-maps";
 import { services } from '@tomtom-international/web-sdk-services';
 import SearchBox from '@tomtom-international/web-sdk-plugin-searchbox';
 import ZoomControls from '@tomtom-international/web-sdk-plugin-zoomcontrols';
+import '@tomtom-international/web-sdk-maps/dist/maps.css';
+import '@tomtom-international/web-sdk-plugin-searchbox/dist/SearchBox.css';
+import '@tomtom-international/web-sdk-plugin-zoomcontrols/dist/ZoomControls.css';
 
 const TomTomMap = () => {
     const mapContainerRef = useRef(null);
