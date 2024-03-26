@@ -1,5 +1,7 @@
-## Available Scripts
+## Context
+This is a project built by react, and using the TomTom web sdk to implement a simple map.
 
+## Start
 ### `npm i`
 Install the dependencies
 
