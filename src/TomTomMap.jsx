@@ -117,7 +117,11 @@ const TomTomMap = () => {
 
     useEffect(() => {
         navigator.geolocation.getCurrentPosition(position => {
+            console.log({ position });
             initMap(position);
+        }, error => {
+            console.log('User does not give the access to the position, use the default now...');
+            initMap({ coords: { longitude: '121.520630', latitude: '31.239136' } });
         });
     });
 
