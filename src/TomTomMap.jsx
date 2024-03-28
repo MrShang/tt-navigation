@@ -46,8 +46,12 @@ const TomTomMap = () => {
         if (currentLocationIndex < routeCoordinates.length) {
             const currentLocation = routeCoordinates[currentLocationIndex];
             map.setCenter(currentLocation);
+            new tt.Popup()
+                .setLngLat(currentLocation)
+                .setHTML("<p>Start</p>")
+                .addTo(map);
             currentLocationIndex++;
-            setTimeout(moveCurrentLocation(map, routeCoordinates), 100); // Update every 2 seconds (adjust as needed)
+            setTimeout(moveCurrentLocation(map, routeCoordinates), 1); // Update every 2 seconds (adjust as needed)
         }
     }
 
@@ -64,12 +68,19 @@ const TomTomMap = () => {
                 minZoom: 2,
                 maxZoom:12
             });
+            const marker = new tt.Marker({ color: '#0016ff' })
+                .setLngLat([position.coords.longitude, position.coords.latitude])
+                .addTo(map);
+
             const ttSearchBox = new SearchBox(services, options);
             ttSearchBox.on('tomtom.searchbox.resultselected', data => {
                 console.log('selected data ....');
                 console.log({ data });
                 const locations = `${position.coords.longitude},${position.coords.latitude}:${data.data.result.position.lng},${data.data.result.position.lat}`;
                 console.log({ locations });
+                new tt.Marker({ color: '#ff0000' })
+                    .setLngLat([data.data.result.position.lng, data.data.result.position.lat])
+                    .addTo(map);
                 services.calculateRoute({
                   key: API_KEY,
                   locations: locations
@@ -96,16 +107,25 @@ const TomTomMap = () => {
                     let currentStep = 0;
                     const stepInterval = 100; // Move to the next step every second
                     const routeGeometry = geoData.features[0].geometry.coordinates;
+                    const popup = new tt.Popup()
+                        .setLngLat([routeGeometry[0][0], routeGeometry[0][1]])
+                        .setText("I'm here")
+                        .addTo(map);
                     const simulateStep = () => {
                         if (currentStep < routeGeometry.length) {
                           const position = routeGeometry[currentStep];
                           map.panTo([position[0], position[1]]);
+                          popup.setText(`I'm in spot ${currentStep}`);
+                          popup.setLngLat([position[0], position[1]]);
                           currentStep++;
                           setTimeout(simulateStep, stepInterval);
                         }
                     };
 
+                    // Enable 3D rendering for the map
                     map.setPitch(45);
+                    map.setBearing(0);
+
                     simulateStep();
                 });
             });
